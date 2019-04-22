@@ -231,7 +231,7 @@ class PommeViewer(Viewer):
         self._width = width
         self.window = pyglet.window.Window(
             width=width, height=height, display=display)
-        self.window.set_caption('Pommerman')
+        self.window.set_caption('Bomberman Brics')
         self.isopen = True
         self._board_size = board_size
         self._resource_manager = ResourceManager(game_type)
@@ -335,7 +335,7 @@ class PommeViewer(Viewer):
         text = []
         board_top = self.board_top(y_offset=8)
         title_label = pyglet.text.Label(
-            'Pommerman',
+            'Bomberman Brics',
             font_name='Cousine-Regular',
             font_size=36,
             x=constants.BORDER_SIZE,

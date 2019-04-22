@@ -63,11 +63,14 @@ def make_board(size, num_rigid=0, num_wood=0):
     def lay_wall(value, num_left, coordinates, board):
         '''Lays all of the walls on a board'''
         x, y = random.sample(coordinates, 1)[0]
-        coordinates.remove((x, y))
+        if x != y:
+            coordinates.remove((x, y))
+            board[x, y] = value
+            num_left -= 1
         coordinates.remove((y, x))
-        board[x, y] = value
         board[y, x] = value
-        num_left -= 2
+        num_left -= 1
+
         return num_left
 
     def make(size, num_rigid, num_wood):
@@ -77,11 +80,10 @@ def make_board(size, num_rigid=0, num_wood=0):
                          size)).astype(np.uint8) * constants.Item.Passage.value
 
         # Gather all the possible coordinates to use for walls.
-        coordinates = set([
-            (x, y) for x, y in \
-            itertools.product(range(size), range(size)) \
-            if x != y])
-
+        coordinates = set()
+        for x in range(size):
+            for y in range(size):
+                coordinates.add((x, y))
         # Set the players down. Exclude them from coordinates.
         # Agent0 is in top left. Agent1 is in bottom left.
         # Agent2 is in bottom right. Agent 3 is in top right.
@@ -105,29 +107,19 @@ def make_board(size, num_rigid=0, num_wood=0):
             coordinates.remove((i, size - 2))
             coordinates.remove((size - 2, i))
 
-        # Lay down wooden walls providing guaranteed passage to other agents.
-        wood = constants.Item.Wood.value
-        for i in range(4, size - 4):
-            board[1, i] = wood
-            board[size - i - 1, 1] = wood
-            board[size - 2, size - i - 1] = wood
-            board[size - i - 1, size - 2] = wood
-            coordinates.remove((1, i))
-            coordinates.remove((size - i - 1, 1))
-            coordinates.remove((size - 2, size - i - 1))
-            coordinates.remove((size - i - 1, size - 2))
-            num_wood -= 4
-
         # Lay down the rigid walls.
         while num_rigid > 0:
-            num_rigid = lay_wall(constants.Item.Rigid.value, num_rigid,
-                                 coordinates, board)
+            for i in range(size):
+                for j in range(size):
+                    if i % 2 == 0 and j % 2 == 0:
+                        board[i, j] = constants.Item.Rigid.value
+                        coordinates.remove((i, j))
+                        num_rigid -= 1
 
         # Lay down the wooden walls.
         while num_wood > 0:
             num_wood = lay_wall(constants.Item.Wood.value, num_wood,
                                 coordinates, board)
-
         return board, agents
 
     assert (num_rigid % 2 == 0)
