@@ -35,7 +35,7 @@ class PommermanJSONEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def make_board(size, num_rigid=0, num_wood=0):
+def make_board(size, num_agents, num_rigid=0, num_wood=0):
     """Make the random but symmetric board.
 
     The numbers refer to the Item enum in constants. This is:
@@ -89,9 +89,25 @@ def make_board(size, num_rigid=0, num_wood=0):
         # Agent2 is in bottom right. Agent 3 is in top right.
         board[1, 1] = constants.Item.Agent0.value
         board[size - 2, 1] = constants.Item.Agent1.value
-        board[size - 2, size - 2] = constants.Item.Agent2.value
-        board[1, size - 2] = constants.Item.Agent3.value
-        agents = [(1, 1), (size - 2, 1), (1, size - 2), (size - 2, size - 2)]
+        if num_agents > 2:
+            board[size - 2, size - 2] = constants.Item.Agent2.value
+            if num_agents > 3:
+                board[1, size - 2] = constants.Item.Agent3.value
+            else:
+                board[1, size - 2] = constants.Item.Passage.value
+        else:
+            board[size - 2, size - 2] = constants.Item.Passage.value
+            board[1, size - 2] = constants.Item.Passage.value
+
+        if num_agents == 4:
+            agents = [(1, 1), (size - 2, 1), (1, size - 2), (size - 2, size - 2)]
+        elif num_agents == 3:
+            agents = [(1, 1), (size - 2, 1), (1, size - 2)]
+        elif num_agents == 2:
+            agents = [(1, 1), (size - 2, 1)]
+        elif num_agents == 1:
+            agents = [(1, 1)]
+
         for position in agents:
             if position in coordinates:
                 coordinates.remove(position)
@@ -102,10 +118,12 @@ def make_board(size, num_rigid=0, num_wood=0):
             coordinates.remove((i, 1))
             coordinates.remove((1, size - i - 1))
             coordinates.remove((size - i - 1, 1))
-            coordinates.remove((size - 2, size - i - 1))
-            coordinates.remove((size - i - 1, size - 2))
-            coordinates.remove((i, size - 2))
-            coordinates.remove((size - 2, i))
+            if num_agents > 2:
+                coordinates.remove((size - 2, size - i - 1))
+                coordinates.remove((size - i - 1, size - 2))
+                if num_agents > 3:
+                    coordinates.remove((i, size - 2))
+                    coordinates.remove((size - 2, i))
 
         # Lay down the rigid walls.
         while num_rigid > 0:

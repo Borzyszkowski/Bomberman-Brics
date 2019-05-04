@@ -42,7 +42,7 @@ class HttpAgent(BaseAgent):
                 now = time.time()
                 if timeout and end < now:
                     print("Timed out - %s:%s" % (self._host, self._port))
-                    raise
+                    raise SystemError
 
                 request_url = 'http://%s:%s/ping' % (self._host, self._port)
                 req = requests.get(request_url)
