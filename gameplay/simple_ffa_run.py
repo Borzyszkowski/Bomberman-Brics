@@ -9,14 +9,13 @@ def main():
        Use this as an example to set up your training env.
     '''
     # Print all possible environments in the Pommerman registry
-    print(pommerman.REGISTRY)
+    # print(pommerman.REGISTRY)
 
     # Create a set of agents (exactly four)
     agent_list = [
-        agents.SimpleAgent(),
+        agents.PlayerAgent(),
         agents.RandomAgent(),
-        agents.SimpleAgent(),
-        agents.RandomAgent(),
+        agents.RandomAgent()
         # agents.DockerAgent("pommerman/simple-agent", port=12345),
     ]
     # Make the "Free-For-All" environment using the agent list

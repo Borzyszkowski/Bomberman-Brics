@@ -169,7 +169,6 @@ class PixelViewer(Viewer):
 
         other_imgs = np.concatenate(other_imgs, 0)
         img = np.concatenate([all_img, other_imgs], 1)
-
         return img
 
     @staticmethod
@@ -224,8 +223,7 @@ class PommeViewer(Viewer):
         board_height = constants.TILE_SIZE * board_size
         height = math.ceil(board_height + (constants.BORDER_SIZE * 2) +
                            (constants.MARGIN_SIZE * 3))
-        width = math.ceil(board_height + board_height / 4 +
-                          (constants.BORDER_SIZE * 2) + constants.MARGIN_SIZE)
+        width = math.ceil(board_height + (constants.BORDER_SIZE * 2))
 
         self._height = height
         self._width = width
@@ -258,7 +256,7 @@ class PommeViewer(Viewer):
         text = self.render_text()
         agents = self.render_dead_alive()
         board = self.render_main_board()
-        agents_board = self.render_agents_board()
+        # agents_board = self.render_agents_board()
 
         self._batch.draw()
         self.window.flip()
@@ -271,20 +269,20 @@ class PommeViewer(Viewer):
         top = self.board_top(-constants.BORDER_SIZE - 8)
         return self.render_board(board, x_offset, y_offset, size, top)
 
-    def render_agents_board(self):
-        x_offset = self._board_size * self._tile_size + constants.BORDER_SIZE
-        x_offset += constants.MARGIN_SIZE
-        size = self._agent_tile_size
-        agents = []
-        top = self._height - constants.BORDER_SIZE + constants.MARGIN_SIZE
-        for agent in self._agents:
-            y_offset = agent.agent_id * size * self._board_size + (
-                agent.agent_id * constants.MARGIN_SIZE) + constants.BORDER_SIZE
-            agent_board = self.agent_view(agent)
-            sprite = self.render_board(agent_board, x_offset, y_offset, size,
-                                       top)
-            agents.append(sprite)
-        return agents
+    # def render_agents_board(self):
+    #     x_offset = self._board_size * self._tile_size + constants.BORDER_SIZE
+    #     x_offset += constants.MARGIN_SIZE
+    #     size = self._agent_tile_size
+    #     agents = []
+    #     top = self._height - constants.BORDER_SIZE + constants.MARGIN_SIZE
+    #     for agent in self._agents:
+    #         y_offset = agent.agent_id * size * self._board_size + (
+    #             agent.agent_id * constants.MARGIN_SIZE) + constants.BORDER_SIZE
+    #         agent_board = self.agent_view(agent)
+    #         sprite = self.render_board(agent_board, x_offset, y_offset, size,
+    #                                    top)
+    #         agents.append(sprite)
+    #     return agents
 
     def render_board(self, board, x_offset, y_offset, size, top=0):
         sprites = []

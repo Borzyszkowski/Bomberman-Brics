@@ -124,8 +124,8 @@ class Pomme(gym.Env):
             with open(game_state_file, 'r') as f:
                 self._init_game_state = json.loads(f.read())
 
-    def make_board(self):
-        self._board = utility.make_board(self._board_size, self._num_rigid,
+    def make_board(self, num_agents):
+        self._board = utility.make_board(self._board_size, num_agents, self._num_rigid,
                                          self._num_wood)
 
     def make_items(self):
@@ -164,7 +164,7 @@ class Pomme(gym.Env):
             self.set_json_info()
         else:
             self._step_count = 0
-            self.make_board()
+            self.make_board(len(self._agents))
             self.make_items()
             self._bombs = []
             self._flames = []
