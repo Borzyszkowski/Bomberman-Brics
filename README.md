@@ -29,5 +29,6 @@ Project was presented on several events and conferences such as FOKA 2019 and GU
 * **Grzegorz Opoka**
 * **Maksymilian Bubala**
 
-
-![Bomberman_Brics](https://github.com/Borzyszkowski/Bomberman-Brics/blob/master/pommerman/resources/Bomberman_Brics.png)
+<p align="center">
+<img src="./pommerman/resources/Bomberman_Brics.png">
+</p>
