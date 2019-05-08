@@ -13,7 +13,7 @@ In this project, we compare various agents and their behaviour in different envi
  with Pommerman, popular AI competition. Finally, we discuss existing exploration methods such as Max-Boltzmann, Random-Walk, Greedy,
  E-Greedy and explain systems of rewards implemented in agents as well as tactics they have learned.
 
-Our own environment "Bomberman - Brics" is available at GitHub repository:
+Our version of "RL vs. Bomberman" game is available at GitHub repository:
 [RL vs. Bomberman game](https://github.com/Borzyszkowski/RL-Bomberman-Gradient).
 
 Project was presented on several events and conferences such as FOKA 2019 and GUT Day for AI. 
