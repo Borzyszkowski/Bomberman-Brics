@@ -43,10 +43,10 @@ def create_model():
         sess.run(init)
 
         model = Sequential()
-        model.add(Conv2D(32, kernel_size=2, strides=(1,1), input_shape=(view_size, view_size, n_channels*history_length),
+        model.add(Conv2D(32, kernel_size=3, strides=(1,1), input_shape=(view_size, view_size, n_channels*history_length),
                          activation='relu'))
-        model.add(Conv2D(64, kernel_size=2, strides=(1,1), activation='relu'))
-        model.add(Conv2D(64, kernel_size=2, strides=(1,1), activation='relu'))
+        model.add(Conv2D(64, kernel_size=3, strides=(1,1), activation='relu'))
+        model.add(Conv2D(64, kernel_size=3, strides=(1,1), activation='relu'))
         model.add(Flatten())
         model.add(Dense(units=128, activation='relu'))
         model.add(Dense(units=128, activation='relu'))
