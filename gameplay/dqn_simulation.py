@@ -11,7 +11,7 @@ BOARD_SIZE = 11
 def env_for_players():
     config = ffa_v0_fast_env()
     env = Pomme(**config["env_kwargs"])
-    agents = [PlayerAgent(config["agent"](0, config["game_type"])),
+    agents = [DQN(config["agent"](0, config["game_type"])),
               SimpleAgent(config["agent"](1, config["game_type"])),
               SimpleAgent(config["agent"](2, config["game_type"])),
               SimpleAgent(config["agent"](3, config["game_type"]))]
@@ -25,7 +25,7 @@ def env_for_players():
 def main():
     model = create_model()
     dqn, callbacks = create_dqn(model=model)
-    # dqn.load_weights('../pommerman/Qlearning/models/06_04_15-20_new_marcin.h5')
+    dqn.load_weights('../Qlearning/models/18_03_9-10_new_reward.h5')
     env = EnvWrapperRS(env_for_players(), BOARD_SIZE)  # change env_for_players() to set_pommerman_env to have a simulation
     while True:
         dqn.test(env)

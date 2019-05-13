@@ -1,3 +1,10 @@
+from Qlearning.dqn_keras_rl import create_dqn, set_pommerman_env, create_model, DQN
+from Qlearning.env_wrapper import EnvWrapper
+from Qlearning.env_with_rewards import EnvWrapperRS
+from pommerman.configs import ffa_v0_fast_env
+from pommerman.envs.v0 import Pomme
+from pommerman.agents import SimpleAgent, RandomAgent, PlayerAgent
+
 from PyQt5.QtWidgets import QWidget, QPushButton, QLabel, QApplication
 from PyQt5.QtGui import QPixmap, QIcon
 import pickle
@@ -5,6 +12,7 @@ from datetime import datetime
 import os
 import pommerman
 from pommerman import agents
+
 
 
 class Menu(QWidget):
@@ -98,11 +106,22 @@ class SelectGame(QWidget):
 
     def player_vs_3(self):
         self.hide()
-        self.start_gameplay(4, False)
+        # self.start_gameplay(4, False)
+        self.start_game_with_agent()
 
     def simulation(self):
         self.hide()
         self.start_gameplay(4, True)
+
+    def start_game_with_agent(self):
+
+        model = create_model()
+        dqn, callbacks = create_dqn(model=model)
+        dqn.load_weights('../Qlearning/models/18_03_9-10_new_reward.h5')
+        env = EnvWrapperRS(self.env_for_players(),
+                           11)  # change env_for_players() to set_pommerman_env to have a simulation
+
+        dqn.test(env)
 
     def start_gameplay(self, num_players=4, simulation=True):
         # Create a set of agents (exactly four)
@@ -127,6 +146,19 @@ class SelectGame(QWidget):
         env.close()
         self.game_replay.append(num_players)
         self.game_over_screen.show()
+
+    def env_for_players(self):
+        config = ffa_v0_fast_env(50)
+        env = Pomme(**config["env_kwargs"])
+        agents = [DQN(config["agent"](0, config["game_type"])),
+                  PlayerAgent(config["agent"](1, config["game_type"])),
+                  RandomAgent(config["agent"](2, config["game_type"])),
+                  RandomAgent(config["agent"](3, config["game_type"]))]
+        env.set_agents(agents)
+        env.set_training_agent(agents[0].agent_id)  # training_agent is only dqn agent
+        env.set_init_game_state(None)
+
+        return env
 
 
 def create_button(button, button_pix, x, y):

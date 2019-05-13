@@ -43,13 +43,15 @@ def create_model():
         sess.run(init)
 
         model = Sequential()
-        model.add(Conv2D(32, kernel_size=2, strides=(1,1), input_shape=(view_size, view_size, n_channels*history_length),
-                         activation='relu'))
-        model.add(Conv2D(64, kernel_size=2, strides=(1,1), activation='relu'))
-        model.add(Conv2D(64, kernel_size=2, strides=(1,1), activation='relu'))
+        model.add(
+            Conv2D(32, kernel_size=2, strides=(1, 1), input_shape=(view_size, view_size, n_channels * history_length),
+                   activation='relu'))
+        model.add(Conv2D(64, kernel_size=2, strides=(1, 1), activation='relu'))
+        model.add(Conv2D(64, kernel_size=2, strides=(1, 1), activation='relu'))
         model.add(Flatten())
-        model.add(Dense(units=128, activation='relu'))
-        model.add(Dense(units=128, activation='relu'))
+        model.add(Dense(units=128, activation='relu'))  # original
+        model.add(Dense(units=128,
+                        activation='relu'))  # was one Dense(units=512, activation='relu') if u want to run my weights
         model.add(Dense(units=NUM_OF_ACTIONS, activation='linear'))
         model.compile(optimizer=Adam(lr=0.0005), loss=tf.losses.huber_loss, metrics=['mae'])
 
