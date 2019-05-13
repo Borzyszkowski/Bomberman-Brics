@@ -107,13 +107,13 @@ class SelectGame(QWidget):
     def player_vs_3(self):
         self.hide()
         # self.start_gameplay(4, False)
-        self.start_game_with_agent()
+        self.start_game_with_agent(4)
 
     def simulation(self):
         self.hide()
         self.start_gameplay(4, True)
 
-    def start_game_with_agent(self):
+    def start_game_with_agent(self, num_players=4):
 
         model = create_model()
         dqn, callbacks = create_dqn(model=model)
@@ -122,6 +122,9 @@ class SelectGame(QWidget):
                            11)  # change env_for_players() to set_pommerman_env to have a simulation
 
         dqn.test(env)
+        env.close()
+        self.game_replay.append(num_players)
+        self.game_over_screen.show()
 
     def start_gameplay(self, num_players=4, simulation=True):
         # Create a set of agents (exactly four)
@@ -148,7 +151,7 @@ class SelectGame(QWidget):
         self.game_over_screen.show()
 
     def env_for_players(self):
-        config = ffa_v0_fast_env(50)
+        config = ffa_v0_fast_env(30)
         env = Pomme(**config["env_kwargs"])
         agents = [DQN(config["agent"](0, config["game_type"])),
                   PlayerAgent(config["agent"](1, config["game_type"])),

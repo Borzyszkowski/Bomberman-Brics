@@ -19,10 +19,9 @@ from pommerman.constants import *
 
 import tensorflow as tf
 
-
 history_length = 4
 # BOARD_SIZE = 11
-view_size = BOARD_SIZE*2 - 1
+view_size = BOARD_SIZE * 2 - 1
 n_channels = 18
 config = ffa_v0_fast_env()
 env = Pomme(**config["env_kwargs"])
@@ -44,10 +43,11 @@ def create_model():
 
         model = Sequential()
 
-        model.add(Conv2D(32, kernel_size=2, strides=(1,1), input_shape=(view_size, view_size, n_channels*history_length),
-                         activation='relu'))
-        model.add(Conv2D(64, kernel_size=2, strides=(1,1), activation='relu'))
-        model.add(Conv2D(64, kernel_size=2, strides=(1,1), activation='relu'))
+        model.add(
+            Conv2D(32, kernel_size=2, strides=(1, 1), input_shape=(view_size, view_size, n_channels * history_length),
+                   activation='relu'))
+        model.add(Conv2D(64, kernel_size=2, strides=(1, 1), activation='relu'))
+        model.add(Conv2D(64, kernel_size=2, strides=(1, 1), activation='relu'))
         model.add(Flatten())
         model.add(Dense(units=128, activation='relu'))  # original
         model.add(Dense(units=128,
@@ -61,7 +61,7 @@ def create_model():
         return model
 
 
-def load_trained_model(weights_path = './models/dqn_agent_fullmodel.hdf5'):
+def load_trained_model(weights_path='./models/dqn_agent_fullmodel.hdf5'):
     model = create_model()
     model.load_weights(filepath=weights_path)
     return model
@@ -85,10 +85,10 @@ def set_pommerman_env(agent_id=0):
 
 
 def create_dqn(model,
-            log_interval=50000,
-            model_name='dqn_agent_checkpoint',
-            file_log_path='./logs/log.txt',
-            tensorboard_path='./logs/tensorboard/'):
+               log_interval=50000,
+               model_name='dqn_agent_checkpoint',
+               file_log_path='./logs/log.txt',
+               tensorboard_path='./logs/tensorboard/'):
     model_path = './models/' + model_name + '.h5'
     file_logger = FileLogger(file_log_path, interval=log_interval)
     checkpoint = ModelIntervalCheckpoint(model_path, interval=log_interval)
@@ -127,7 +127,6 @@ def create_dqn(model,
 
 
 if __name__ == '__main__':
-
     env_wrapper = EnvWrapperRS(set_pommerman_env(agent_id=0), BOARD_SIZE)
     dqn, callbacks = create_dqn(create_model())
 
