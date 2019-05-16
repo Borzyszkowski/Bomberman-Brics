@@ -1,6 +1,6 @@
 import numpy as np
 from pommerman.agents import BaseAgent, SimpleAgent
-from .boardLogger import TensorboardLogger
+from boardLogger import TensorboardLogger
 
 from keras.models import Sequential
 from keras.layers import Dense, Flatten, Conv2D, Dropout
@@ -13,8 +13,8 @@ from rl.callbacks import FileLogger, ModelIntervalCheckpoint
 
 from pommerman.envs.v0 import Pomme
 from pommerman.configs import ffa_v0_fast_env
-from .env_wrapper import CustomProcessor
-from .env_with_rewards import EnvWrapperRS
+from env_wrapper import CustomProcessor
+from stage1_env_wrapper import StageOneEnvWrapper
 from pommerman.constants import *
 
 import tensorflow as tf
@@ -75,8 +75,9 @@ def set_pommerman_env(agent_id=0):
     np.random.seed(0)
     env.seed(0)
     # Add 3 Simple Agents and 1 DQN agent
-    agents = [DQN(config["agent"](agent_id, config["game_type"])) if i == agent_id else SimpleAgent(
-        config["agent"](i, config["game_type"])) for i in range(4)]
+    agents = [DQN(config["agent"](agent_id, config["game_type"]))]
+    # agents = [DQN(config["agent"](agent_id, config["game_type"])) if i == agent_id else SimpleAgent(
+    #     config["agent"](i, config["game_type"])) for i in range(4)]
     env.set_agents(agents)
     env.set_training_agent(agents[agent_id].agent_id)  # training_agent is only dqn agent
     env.set_init_game_state(None)
@@ -127,11 +128,9 @@ def create_dqn(model,
 
 
 if __name__ == '__main__':
-    env_wrapper = EnvWrapperRS(set_pommerman_env(agent_id=0), BOARD_SIZE)
-    dqn, callbacks = create_dqn(create_model())
+    env_wrapper = StageOneEnvWrapper(set_pommerman_env(agent_id=0), BOARD_SIZE)
+    dqn, callbacks = create_dqn(create_model(), model_name='dqn_stage1_agent_checkpoint', file_log_path='./logs/stage1_log.txt', tensorboard_path='./logs/stage1_tensorboard/')
 
-    # dqn.load_weights('./models/marcin_weight_14_03_17-20.h5')
-
-    history = dqn.fit(env_wrapper, nb_steps=NUMBER_OF_STEPS, visualize=False, verbose=2,
+    history = dqn.fit(env_wrapper, nb_steps=NUMBER_OF_STEPS, visualize=True, verbose=2,
                       nb_max_episode_steps=env._max_steps, callbacks=callbacks)
-    dqn.model.save('./models/full_model.hdf5')
+    dqn.model.save('./models/stage1_model.hdf5')
