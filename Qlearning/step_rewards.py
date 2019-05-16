@@ -68,7 +68,7 @@ class StepRewards():
         if future_flames:
             for flame in future_flames:
                 if self.obs_prev['board'][flame] > 10:
-                    print("ENEMY ON MY FLAMES")
+                    # print("ENEMY ON MY FLAMES")
                     self.victim = self.obs_prev['board'][flame]
                 flame_pos = list(flame)
                 if flame_pos in all_flames.tolist():

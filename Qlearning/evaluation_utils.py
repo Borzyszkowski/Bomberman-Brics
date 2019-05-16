@@ -48,7 +48,13 @@ def make_centered(board, position, view_size=BOARD_SIZE * 2 - 1, crop=False):
     return np.array(agent_view, dtype=np.float32)
 
 
-def featurize(obs, center=True, crop=False):
+def featurize(obs):
+    board = obs['board']
+    one_hot = (np.arange(board.max()+1) == board[..., None]).astype(np.uint8)
+    return one_hot
+
+
+def old_featurize(obs, center=True, crop=False):
     shape = (BOARD_SIZE, BOARD_SIZE, 1)
 
     def get_matrix(board, key):
@@ -62,42 +68,42 @@ def featurize(obs, center=True, crop=False):
 
     board = get_matrix(obs, 'board')
 
-    path_map       = get_map(board, 0)          # Empty space
-    rigid_map      = get_map(board, 1)          # Rigid = 1
-    wood_map       = get_map(board, 2)          # Wood = 2
-    bomb_map       = get_map(board, 3)          # Bomb = 3
-    flames_map     = get_map(board, 4)          # Flames = 4
-    fog_map        = get_map(board, 5)          # TODO: not used for first two stages Fog = 5
-    extra_bomb_map = get_map(board, 6)          # ExtraBomb = 6
-    incr_range_map = get_map(board, 7)          # IncrRange = 7
-    kick_map       = get_map(board, 8)          # Kick = 8
-    skull_map      = get_map(board, 9)          # Skull = 9
+    path_map = get_map(board, 0)  # Empty space
+    rigid_map = get_map(board, 1)  # Rigid = 1
+    wood_map = get_map(board, 2)  # Wood = 2
+    bomb_map = get_map(board, 3)  # Bomb = 3
+    flames_map = get_map(board, 4)  # Flames = 4
+    fog_map = get_map(board, 5)  # TODO: not used for first two stages Fog = 5
+    extra_bomb_map = get_map(board, 6)  # ExtraBomb = 6
+    incr_range_map = get_map(board, 7)  # IncrRange = 7
+    kick_map = get_map(board, 8)  # Kick = 8
+    skull_map = get_map(board, 9)  # Skull = 9
 
     position = obs["position"]
     my_position = np.zeros(shape)
     my_position[position[0], position[1], 0] = 1
 
-    team_mates = get_map(board, obs["teammate"].value) # TODO during documentation it should be an array
+    team_mates = get_map(board, obs["teammate"].value)  # TODO during documentation it should be an array
 
     enemies = np.zeros(shape)
     for enemy in obs["enemies"]:
         enemies[board == enemy.value] = 1
 
     bomb_blast_strength = get_matrix(obs, 'bomb_blast_strength')
-    bomb_life           = get_matrix(obs, 'bomb_life')
+    bomb_life = get_matrix(obs, 'bomb_life')
 
-    ammo           = np.full((BOARD_SIZE, BOARD_SIZE, 1), obs["ammo"])
+    ammo = np.full((BOARD_SIZE, BOARD_SIZE, 1), obs["ammo"])
     blast_strength = np.full((BOARD_SIZE, BOARD_SIZE, 1), obs["blast_strength"])
-    can_kick       = np.full((BOARD_SIZE, BOARD_SIZE, 1), int(obs["can_kick"]))
-    
-    maps = [my_position, enemies, team_mates, path_map, rigid_map, 
-                          wood_map, bomb_map, flames_map, fog_map, extra_bomb_map,
-                          incr_range_map, kick_map, skull_map, bomb_blast_strength,
-                          bomb_life, ammo, blast_strength, can_kick]
-    
+    can_kick = np.full((BOARD_SIZE, BOARD_SIZE, 1), int(obs["can_kick"]))
+
+    maps = [my_position, enemies, team_mates, path_map, rigid_map,
+            wood_map, bomb_map, flames_map, fog_map, extra_bomb_map,
+            incr_range_map, kick_map, skull_map, bomb_blast_strength,
+            bomb_life, ammo, blast_strength, can_kick]
+
     if center:
         maps = [make_centered(m, position, crop=crop) for m in maps]
-    
+
     obs = np.concatenate(maps, axis=2)
     return obs.astype(np.uint8)
 

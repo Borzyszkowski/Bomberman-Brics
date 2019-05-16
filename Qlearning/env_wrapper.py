@@ -3,7 +3,7 @@ import numpy as np
 from pommerman import utility
 import os, sys
 sys.path.append('./evaluation_utils.py/')
-from .evaluation_utils import *
+from Qlearning.evaluation_utils import *
 
 
 class EnvWrapper(Env):
@@ -100,7 +100,7 @@ class EnvWrapper(Env):
         raise NotImplementedError()
 
     def featurize(self, obs):
-        return featurize(obs, center=True, crop=False)
+        return self.custom_featurize(obs)
 
     def custom_featurize(self, obs):
         board_features = obs['board'].copy()
@@ -116,7 +116,7 @@ class EnvWrapper(Env):
                     board_features[i][j] = 10
         observation = obs.copy()
         observation['board'] = board_features
-        return featurize(observation, center=True, crop=False)
+        return featurize(observation)
 
 
 
