@@ -27,7 +27,7 @@ config = ffa_v0_fast_env()
 env = Pomme(**config["env_kwargs"])
 ACTIONS = ['stop', 'up', 'down', 'left', 'right', 'bomb']
 NUM_OF_ACTIONS = len(ACTIONS)
-NUMBER_OF_STEPS = 1e7
+NUMBER_OF_STEPS = 1e5
 
 
 # Just formal to create enviroment
@@ -131,6 +131,6 @@ if __name__ == '__main__':
     env_wrapper = StageOneEnvWrapper(set_pommerman_env(agent_id=0), BOARD_SIZE)
     dqn, callbacks = create_dqn(create_model(), model_name='dqn_stage1_agent_checkpoint', file_log_path='./logs/stage1_log.txt', tensorboard_path='./logs/stage1_tensorboard/')
 
-    history = dqn.fit(env_wrapper, nb_steps=NUMBER_OF_STEPS, visualize=True, verbose=2,
+    history = dqn.fit(env_wrapper, nb_steps=NUMBER_OF_STEPS, visualize=False, verbose=2,
                       nb_max_episode_steps=env._max_steps, callbacks=callbacks)
     dqn.model.save('./models/stage1_model.hdf5')
