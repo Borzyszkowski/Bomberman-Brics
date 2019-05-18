@@ -9,20 +9,22 @@ class StageOneEnvWrapper(EnvWrapper):
         self.steps_counter = 0
         self.steps_with_no_bombs = 0
         self.steps_with_no_wall_destroy = 0
+        self.steps_with_no_move = 0
 
         self.steps_limit = 1000
         self.destroyable_wall_on_board = 2
         self.agent_on_board = 10
         self.enemies_on_board = 11
 
+        self.max_steps_with_no_move = 4
         self.no_move_reward = -0.05
-        self.destroy_wall_reward = 0.2
+        self.destroy_wall_reward = 0.1
         self.die_reward = -1
         self.win_reward = 1
         self.max_steps_with_no_bombs = 6
-        self.no_bombs_reward = -0.4
-        self.max_steps_with_no_wall_destroy = 15
-        self.no_wall_destroy_reward = -0.4
+        self.no_bombs_reward = -0.1
+        self.max_steps_with_no_wall_destroy = 12
+        self.no_wall_destroy_reward = -0.1
 
     def step(self, action):
         """Run one timestep of the environment's dynamics.
@@ -103,7 +105,15 @@ class StageOneEnvWrapper(EnvWrapper):
 
         # If agent doesnt move
         if obs[self.gym.training_agent]['position'] == self.previous_obs[self.gym.training_agent]['position']:
-            reward += self.no_move_reward
+            self.steps_with_no_move += 1
+            if self.steps_with_no_move > self.max_steps_with_no_move:
+                reward += self.no_move_reward
+                self.steps_with_no_move = 0
+        else:
+            self.steps_with_no_move = 0
+
+        print(reward)
+        time.sleep(0.5)
 
         self.previous_board_features = board_features
         self.previous_obs = obs.copy()
@@ -132,4 +142,5 @@ class StageOneEnvWrapper(EnvWrapper):
         self.steps_counter = 0
         self.steps_with_no_bombs = 0
         self.steps_with_no_wall_destroy = 0
+        self.steps_with_no_move = 0
         return agent_obs
