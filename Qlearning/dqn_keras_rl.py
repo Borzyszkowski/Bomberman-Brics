@@ -1,6 +1,6 @@
 import numpy as np
 from pommerman.agents import BaseAgent, SimpleAgent
-from Qlearning.boardLogger import TensorboardLogger
+from .boardLogger import TensorboardLogger
 
 from keras.models import Sequential
 from keras.layers import Dense, Flatten, Conv2D, Dropout
@@ -13,8 +13,8 @@ from rl.callbacks import FileLogger, ModelIntervalCheckpoint
 
 from pommerman.envs.v0 import Pomme
 from pommerman.configs import ffa_v0_fast_env
-from Qlearning.env_wrapper import CustomProcessor
-from Qlearning.env_with_rewards import EnvWrapperRS
+from .env_wrapper import CustomProcessor
+from .env_with_rewards import EnvWrapperRS
 from pommerman.constants import *
 
 import tensorflow as tf
@@ -27,8 +27,8 @@ config = ffa_v0_fast_env()
 env = Pomme(**config["env_kwargs"])
 ACTIONS = ['stop', 'up', 'down', 'left', 'right', 'bomb']
 NUM_OF_ACTIONS = len(ACTIONS)
-NUM_OF_STATES = 12
 NUMBER_OF_STEPS = 1e7
+
 
 # Just formal to create enviroment
 class DQN(BaseAgent):
@@ -44,10 +44,10 @@ def create_model():
         model = Sequential()
 
         model.add(
-            Conv2D(32, kernel_size=(3, 3), strides=(1, 1), input_shape=(BOARD_SIZE, BOARD_SIZE, NUM_OF_STATES * history_length),
+            Conv2D(32, kernel_size=2, strides=(1, 1), input_shape=(view_size, view_size, n_channels * history_length),
                    activation='relu'))
-        model.add(Conv2D(64, kernel_size=(3, 3), strides=(1, 1), activation='relu'))
-        model.add(Conv2D(64, kernel_size=(3, 3), strides=(1, 1), activation='relu'))
+        model.add(Conv2D(64, kernel_size=2, strides=(1, 1), activation='relu'))
+        model.add(Conv2D(64, kernel_size=2, strides=(1, 1), activation='relu'))
         model.add(Flatten())
         model.add(Dense(units=128, activation='relu'))  # original
         model.add(Dense(units=128,

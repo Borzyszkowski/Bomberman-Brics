@@ -111,8 +111,7 @@ class SelectGame(QWidget):
 
     def simulation(self):
         self.hide()
-        # self.start_gameplay(4, True)
-        self.simulation_with_agent()
+        self.start_gameplay(4, True)
 
     def start_game_with_agent(self, num_players=4):
 
@@ -126,16 +125,6 @@ class SelectGame(QWidget):
         env.close()
         self.game_replay.append(num_players)
         self.game_over_screen.show()
-
-    def simulation_with_agent(self):
-        model = create_model()
-        dqn, callbacks = create_dqn(model=model)
-        dqn.load_weights('../Qlearning/models/18_03_9-10_new_reward.h5')
-        env = EnvWrapperRS(self.env_for_simulation(),
-                           11)  # change env_for_players() to set_pommerman_env to have a simulation
-        while True:
-            dqn.test(env)
-        env.close()
 
     def start_gameplay(self, num_players=4, simulation=True):
         # Create a set of agents (exactly four)
@@ -168,19 +157,6 @@ class SelectGame(QWidget):
                   PlayerAgent(config["agent"](1, config["game_type"])),
                   RandomAgent(config["agent"](2, config["game_type"])),
                   RandomAgent(config["agent"](3, config["game_type"]))]
-        env.set_agents(agents)
-        env.set_training_agent(agents[0].agent_id)  # training_agent is only dqn agent
-        env.set_init_game_state(None)
-
-        return env
-
-    def env_for_simulation(self):
-        config = ffa_v0_fast_env(30)
-        env = Pomme(**config["env_kwargs"])
-        agents = [DQN(config["agent"](0, config["game_type"])),
-                  SimpleAgent(config["agent"](1, config["game_type"])),
-                  SimpleAgent(config["agent"](2, config["game_type"])),
-                  SimpleAgent(config["agent"](3, config["game_type"]))]
         env.set_agents(agents)
         env.set_training_agent(agents[0].agent_id)  # training_agent is only dqn agent
         env.set_init_game_state(None)

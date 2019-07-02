@@ -1,5 +1,5 @@
-from Qlearning.env_wrapper import EnvWrapper
-from Qlearning.step_rewards import StepRewards
+from .env_wrapper import EnvWrapper
+from .step_rewards import StepRewards
 
 
 class EnvWrapperRS(EnvWrapper):
